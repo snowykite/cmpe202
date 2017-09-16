@@ -3,31 +3,35 @@
 public class GumballMachine {
  
 	State soldOutState;
-	State noQuarterState;
-	State hasQuarterState;
+	State notEnoughCoins;
+	State enoughCoins;
 	State soldState;
  
 	State state = soldOutState;
-	int count = 0;
+	int numGumballs;
+	int coinsReceived;
+	int cost;
+	boolean quarterOnly;
+	int lastCoin;
  
-	public GumballMachine(int numberGumballs) {
+	public GumballMachine(int numberGumballs, boolean quarterOnly, int cost) {
 		soldOutState = new SoldOutState(this);
-		noQuarterState = new NoQuarterState(this);
-		hasQuarterState = new HasQuarterState(this);
+		notEnoughCoinsState = new notEnoughCoinsState(this);
+		enoughCoinsState = new enoughCoinsState(this);
 		soldState = new SoldState(this);
 
-		this.count = numberGumballs;
+		this.numGumballs = numberGumballs;
+		this.cost = cost;
+		this.quarterOnly = quarterOnly;
  		if (numberGumballs > 0) {
-			state = noQuarterState;
+			state = notEnoughCoinsState;
 		} 
 	}
  
-	public void insertQuarter() {
-		state.insertQuarter();
-	}
+	public void insertCoins() { state.insertcoins(int coins); }
  
-	public void ejectQuarter() {
-		state.ejectQuarter();
+	public void ejectCoins() {
+		state.ejectcoins();
 	}
  
 	public void turnCrank() {
@@ -41,18 +45,26 @@ public class GumballMachine {
  
 	void releaseBall() {
 		System.out.println("A gumball comes rolling out the slot...");
-		if (count != 0) {
-			count = count - 1;
+		if (numGumballs != 0) {
+			numGumballs = numGumballs - 1;
 		}
 	}
  
-	int getCount() {
-		return count;
+	public int getNumGumballs() {
+		return numGumballs;
 	}
+
+	public int getCoinsReceived() {return coinsReceived;}
+
+	public int getCost() {return cost;}
+
+	public void setcoins(int coins) {this.coins = coins; }
+
+	boolean isQuarterOnly() {return quarterOnly;}
  
-	void refill(int count) {
-		this.count = count;
-		state = noQuarterState;
+	void refill(int numGumballs) {
+		this.numGumballs = numGumballs;
+		state = notEnoughCoinsState;
 	}
 
     public State getState() {
@@ -63,13 +75,13 @@ public class GumballMachine {
         return soldOutState;
     }
 
-    public State getNoQuarterState() {
-        return noQuarterState;
+    public State getnotEnoughCoinsState() {
+        return notEnoughCoinsState;
     }
 
-    public State getHasQuarterState() {
-        return hasQuarterState;
-    }
+	public State getenoughCoinsState() {
+		return enoughCoinsState;
+	}
 
     public State getSoldState() {
         return soldState;
